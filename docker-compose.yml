@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  backend:
+    container_name: backend
+    build:
+      target: dev
+      context: ./docker/backend/
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./backend:/go/src/app
+      - ./Makefile:/go/src/app/Makefile
+    ports:
+      - 18080:8080
