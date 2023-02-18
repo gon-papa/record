@@ -18,10 +18,10 @@ type errorResponse struct {
 }
 
 var (
-	ErrUnknown             = InitErrorResponse(400, "unknown", "")
-	ErrUnAuthorized        = InitErrorResponse(401, "unauthorized", "")
-	ErrRecordNotFound      = InitErrorResponse(404, "not found", "")
-	ErrInternalServerError = InitErrorResponse(500, "internal server error", "")
+	ErrUnknown             = NewErrorResponse(400, "unknown", "")
+	ErrUnAuthorized        = NewErrorResponse(401, "unauthorized", "")
+	ErrRecordNotFound      = NewErrorResponse(404, "not found", "")
+	ErrInternalServerError = NewErrorResponse(500, "internal server error", "")
 )
 
 type Responser interface {
@@ -64,11 +64,11 @@ func handleError(w http.ResponseWriter, status int, message string, trace string
 	// ログ出力
 }
 
-func InitResponse(msg string, data interface{}) *response {
+func NewResponse(msg string, data interface{}) *response {
 	return &response{Message: msg, Data: data}
 }
 
-func InitErrorResponse(statusCode int, msg string, trace string) *errorResponse {
+func NewErrorResponse(statusCode int, msg string, trace string) *errorResponse {
 	return &errorResponse{StatusCode: statusCode, Message: msg, Trace: trace}
 }
 
