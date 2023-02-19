@@ -11,9 +11,11 @@ type Config struct {
 	TimeZone string `env:"TIME_ZONE" envDefault:"Asia/Tokyo"`
 }
 
+var singleton = &Config{}
+
 // singleton
 func GetConfig() (*Config, error) {
-	cnf := &Config{}
+	cnf := singleton
 	if err := env.Parse(cnf); err != nil {
 		return nil, err
 	}
