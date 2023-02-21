@@ -5,13 +5,14 @@ import (
 )
 
 type Config struct {
-	Env       string `env:"APP_ENV" envDefault:"dev"`
-	Url       string `env:"APP_URL" envDefault:"http://localhost"`
-	Port      string `env:"PORT" envDefault:":8080"`
-	TimeZone  string `env:"TIME_ZONE" envDefault:"Asia/Tokyo"`
-	AccessLog string `env:"ACCESS_LOG" envDefault:"./logs/access/"`
-	Log       string `env:"LOG" envDefault:"./logs/log/log.log"`
-	LogLevel  string `env:"LOG_LEVEL" envDefault:"DEBUG"`
+	Env         string `env:"APP_ENV" envDefault:"dev"`
+	Url         string `env:"APP_URL" envDefault:"http://localhost"`
+	Port        string `env:"PORT" envDefault:":8080"`
+	TimeZone    string `env:"TIME_ZONE" envDefault:"Asia/Tokyo"`
+	AccessLog   string `env:"ACCESS_LOG" envDefault:"./logs/access/"`
+	Log         string `env:"LOG" envDefault:"./logs/log/"`
+	LogLevel    string `env:"LOG_LEVEL" envDefault:"DEBUG"`
+	LogRotation int    `env:"LOG_LEVEL" envDefault:"15"`
 }
 
 var singleton = &Config{}
