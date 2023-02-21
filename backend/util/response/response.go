@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/gon-papa/record/util/logger"
 )
 
 type response struct {
@@ -62,6 +64,7 @@ func handleError(w http.ResponseWriter, status int, message string, trace string
 	w.Write(res)
 
 	// ログ出力
+	logger.Error(message, err, trace)
 }
 
 func NewResponse(msg string, data interface{}) *response {

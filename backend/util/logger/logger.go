@@ -13,7 +13,7 @@ import (
 )
 
 // ログの初期化
-func setUp() (*os.File, error) {
+func setUp(accessLog bool) (*os.File, error) {
 	cnf, err := config.GetConfig()
 	if err != nil {
 		fmt.Printf("config not read: %v\n", err)
@@ -32,16 +32,26 @@ func setUp() (*os.File, error) {
 		return nil, errors.New("not open file")
 	}
 
-	l := slog.New(slog.HandlerOptions{
-		AddSource: true,
-		Level:     getLevel(cnf.LogLevel),
-	}.NewTextHandler(f))
+	var option slog.Handler
+	if accessLog {
+		option = slog.HandlerOptions{
+			AddSource: false,
+			Level:     getLevel(cnf.LogLevel),
+		}.NewTextHandler(f)
+	} else {
+		option = slog.HandlerOptions{
+			AddSource: true,
+			Level:     getLevel(cnf.LogLevel),
+		}.NewTextHandler(f)
+	}
+
+	l := slog.New(option)
 
 	logger = l
 	return f, nil
 }
 
-// ログのローテーション設定
+// ログのローテーション設定(後々、定期実行に変えたい)
 func LogRotation(cnf *config.Config) {
 	// ディレクトリ内を全ファイルをスキャン
 	files, err := filepath.Glob(filepath.Join(cnf.Log, "*"))
@@ -78,7 +88,7 @@ var (
 )
 
 func Debug(msg string, args ...any) {
-	f, e := setUp()
+	f, e := setUp(false)
 	if e != nil {
 		fmt.Printf("failed logger: %+v", e)
 		os.Exit(1)
@@ -88,7 +98,7 @@ func Debug(msg string, args ...any) {
 }
 
 func Info(msg string, args ...any) {
-	f, e := setUp()
+	f, e := setUp(false)
 	if e != nil {
 		fmt.Printf("failed logger: %+v", e)
 		os.Exit(1)
@@ -98,7 +108,7 @@ func Info(msg string, args ...any) {
 }
 
 func Warn(msg string, args ...any) {
-	f, e := setUp()
+	f, e := setUp(false)
 	if e != nil {
 		fmt.Printf("failed logger: %+v", e)
 		os.Exit(1)
@@ -108,11 +118,22 @@ func Warn(msg string, args ...any) {
 }
 
 func Error(msg string, err error, args ...any) {
-	f, e := setUp()
+	f, e := setUp(false)
 	if e != nil {
 		fmt.Printf("failed logger: %+v", e)
 		os.Exit(1)
 	}
 	logger.Error(msg, err, args...)
+	defer f.Close()
+}
+
+func AccessLog(args ...any) {
+	f, e := setUp(true)
+	if e != nil {
+		fmt.Printf("failed logger: %+v", e)
+		os.Exit(1)
+	}
+
+	logger.Info("access-log", args...)
 	defer f.Close()
 }
